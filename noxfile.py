@@ -20,14 +20,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from dataclasses import dataclass
-
-from dotenv import dotenv_values
+import nox
 
 
-@dataclass
-class Config:
-    DISCORD_TOKEN: str
+@nox.session
+def flake8(session: nox.Session) -> None:
+    session.install("flake8")
+    session.run("flake8", "bot")
 
 
-CONFIG = Config(**{key: value for key, value in dotenv_values(".env").items() if value})
+@nox.session
+def black(session: nox.Session) -> None:
+    session.install("black")
+    session.run("black", ".", "--check")
+
+
+@nox.session
+def isort(session: nox.Session) -> None:
+    session.install("isort")
+    session.run("isort", ".", "--check")
