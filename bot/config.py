@@ -1,11 +1,11 @@
-from dataclasses import dataclass
+import dataclasses
+import json
 
-from dotenv import dotenv_values
 
-
-@dataclass
+@dataclasses.dataclass
 class Config:
-    DISCORD_TOKEN: str
+    discord_token: str
 
 
-CONFIG = Config(**{key: value for key, value in dotenv_values(".env").items() if value})
+with open(".config.json") as f:
+    CONFIG = Config(**json.loads(f.read()))
