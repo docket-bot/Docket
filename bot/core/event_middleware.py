@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import typing
-import hikari
+
 import attrs
+import hikari
 
 BAD_ATTRS = ["app", "shard"]
 

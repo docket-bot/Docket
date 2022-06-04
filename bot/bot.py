@@ -9,4 +9,3 @@ class Bot(crescent.Bot):
 
         self.plugins.load("bot.plugins.info")
         self.plugins.load("bot.plugins.events")
-
