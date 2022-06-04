@@ -4,11 +4,7 @@ from typing import Any
 
 import attrs
 
-
-BAD_ATTRS = [
-    "app",
-    "shard",
-]
+BAD_ATTRS = ["app", "shard"]
 
 
 def filter(attr: attrs.Attribute[Any], value: Any) -> bool:
@@ -19,12 +15,6 @@ def filter(attr: attrs.Attribute[Any], value: Any) -> bool:
     return True
 
 
-async def handle_event(
-    event: object,
-) -> None:
-    data = attrs.asdict(
-        event,
-        recurse=True,
-        filter=filter,
-    )
+async def handle_event(event: object) -> None:
+    data = attrs.asdict(event, recurse=True, filter=filter)
     print(data)

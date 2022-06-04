@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import hikari
 import crescent
+import hikari
 
 from bot.core.event import handle_event
-
 
 plugin = crescent.Plugin("custom-events")
 
