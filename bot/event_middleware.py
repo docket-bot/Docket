@@ -19,10 +19,10 @@ def _middleware(
 
 
 def _default_serialize(event: hikari.Event):
-    return attrs.asdict(event, recurse=True, filter=filter)
+    return attrs.asdict(event, recurse=True, filter=_filter)
 
 
-def filter(attr: attrs.Attribute[typing.Any], value: typing.Any) -> bool:
+def _filter(attr: attrs.Attribute[typing.Any], value: typing.Any) -> bool:
     if attr.name.startswith("_") or attr.name in BAD_ATTRS:
         return False
     return True
