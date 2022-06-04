@@ -1,6 +1,6 @@
 import crescent
 import hikari
-from bot import event_middleware as events
+from bot.core import event_middleware as events
 
 plugin = crescent.Plugin("events")
 
