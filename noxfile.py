@@ -4,6 +4,7 @@ import nox
 @nox.session
 def mypy(session: nox.Session) -> None:
     session.install("poetry")
+    session.run("poetry", "install")
     session.run("poetry", "run", "mypy", ".")
 
 
