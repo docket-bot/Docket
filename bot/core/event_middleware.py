@@ -9,8 +9,8 @@ BAD_ATTRS = ["app", "shard"]
 
 def _middleware(
     function: typing.Callable[[hikari.Event], typing.Dict[str, typing.Any]]
-):
-    async def inner(event: hikari.Event):
+) -> typing.Callable[[hikari.Event], typing.Awaitable[None]]:
+    async def inner(event: hikari.Event) -> None:
         data = function(event)
         # Pretend this is the event handler
         print(data)
@@ -18,7 +18,7 @@ def _middleware(
     return inner
 
 
-def _default_serialize(event: hikari.Event):
+def _default_serialize(event: hikari.Event) -> typing.Dict[str, typing.Any]:
     return attrs.asdict(event, recurse=True, filter=_filter)
 
 
@@ -29,5 +29,5 @@ def _filter(attr: attrs.Attribute[typing.Any], value: typing.Any) -> bool:
 
 
 @_middleware
-def default(event: hikari.Event):
+def default(event: hikari.Event) -> typing.Dict[str, typing.Any]:
     return _default_serialize(event)
