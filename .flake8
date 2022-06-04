@@ -1,4 +1,6 @@
 [flake8]
 max-line-length=88
-extend_ignore=W503,E203
+extend_ignore=
+    W503,  # line break before binary operator
+    E203,  # allow whitespace before :
 exclude=.nox
