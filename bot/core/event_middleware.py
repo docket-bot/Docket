@@ -3,6 +3,7 @@ from __future__ import annotations
 import typing
 
 from .lua_executor import execute_lua
+from .dot_dict import DotDict
 
 import attrs
 import hikari
@@ -15,8 +16,9 @@ def _middleware(
 ) -> typing.Callable[[hikari.Event], None]:
     def inner(event: hikari.Event) -> None:
         data = function(event)
+        # pretend this is the executor
         code = event.message.content  # TODO undo
-        execute_lua(event.app, event.guild_id, code, event.app.lua_runtime, data)
+        execute_lua(event.app, event.guild_id, code, DotDict(data))
 
     return inner
 

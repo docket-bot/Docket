@@ -16,7 +16,6 @@ class Bot(crescent.Bot):
         self.plugins.load("bot.plugins.events")
 
         self.sync_async = SyncAsync()
-        self.lua_runtime = lupa.LuaRuntime()
 
     async def start(self, *args: Any, **kwargs: Any) -> None:
         self.sync_async_task = asyncio.create_task(
