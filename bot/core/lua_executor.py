@@ -16,14 +16,18 @@ SAFE_BUILTINS = ["tostring"]
 
 
 def get_env(bot: Bot, runtime: Any, guild: int) -> dict[str, Any]:
-    return {
+    env = {
         # callbacks
         "send_message": callbacks.send_message(bot, guild)
-    } | {
-        # builtins
-        name: runtime.eval(name)
-        for name in SAFE_BUILTINS
     }
+    env.update(
+        {
+            # builtins
+            name: runtime.eval(name)
+            for name in SAFE_BUILTINS
+        }
+    )
+    return env
 
 
 def execute_lua(bot: Bot, guild: int, code: str, ctx: LuaPyDict) -> None:

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 MAX_LUA_INT = 982688721935675392
