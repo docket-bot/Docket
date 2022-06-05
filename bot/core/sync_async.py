@@ -37,9 +37,12 @@ class SyncAsync:
                 await asyncio.sleep(0.1)
                 continue
 
-            cb = self.callbacks.pop()
-            with contextlib.suppress(Exception):
-                await cb.complete()
+            callbacks = self.callbacks.copy()
+            self.callbacks.clear()
+            await asyncio.gather(
+                *[cb.complete() for cb in callbacks],
+                return_exceptions=True,
+            )
 
     def sync_call(self, awaitable: Awaitable[_T]) -> _T:
         cb = Callback(self, awaitable)
