@@ -4,8 +4,8 @@ import typing
 
 import hikari
 
-from .lua_executor import execute_lua
-from .lua_py_dict import LuaPyDict
+from .lua.executor import execute_lua
+from .lua.lua_py_dict import LuaPyDict
 from .serialize import serialize
 
 

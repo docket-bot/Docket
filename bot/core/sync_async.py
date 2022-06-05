@@ -39,8 +39,7 @@ class SyncAsync:
             callbacks = self.callbacks.copy()
             self.callbacks.clear()
             await asyncio.gather(
-                *[cb.complete() for cb in callbacks],
-                return_exceptions=True,
+                *[cb.complete() for cb in callbacks], return_exceptions=True
             )
 
     def sync_call(self, awaitable: Awaitable[_T]) -> _T:

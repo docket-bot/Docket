@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Awaitable, Callable
 
-from bot.core.lua_py_dict import LuaPyDict
+from bot.core.lua.lua_py_dict import LuaPyDict
 
-from .serialize import serialize
+from ..serialize import serialize
 
 if TYPE_CHECKING:
     from bot.bot import Bot
