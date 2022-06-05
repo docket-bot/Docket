@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from bot.bot import Bot
 
 INITIAL_LUA = "function (code, env) pcall(load(code, nil, 't', env)) end"
-SAFE_BUILTINS = ["tostring"]
+SAFE_BUILTINS = ["tostring", "tonumber"]
 
 
 def get_env(bot: Bot, runtime: Any, guild: int) -> dict[str, Any]:
