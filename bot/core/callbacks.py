@@ -20,7 +20,9 @@ def factory(
 
 @factory
 async def send_message(
-    bot: Bot, guild: int, channel: int, message: str
+    bot: Bot, guild: int, channel: str, message: str
 ) -> None:
-    assert channel in bot.cache.get_guild_channels_view_for_guild(guild)
-    await bot.rest.create_message(channel, message)
+    ch_id = int(channel)
+    ch = bot.cache.get_guild_channel(ch_id)
+    assert ch and ch.guild_id == guild
+    await bot.rest.create_message(ch_id, message)

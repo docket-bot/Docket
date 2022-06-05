@@ -32,7 +32,6 @@ class SyncAsync:
 
     async def complete_callbacks_loop(self) -> None:
         while True:
-            print(1)
             if not self.callbacks:
                 await asyncio.sleep(0.1)
                 continue
@@ -43,7 +42,5 @@ class SyncAsync:
     def sync_call(self, awaitable: Awaitable[_T]) -> _T:
         cb = Callback(self, awaitable)
         self.callbacks.append(cb)
-        print(1)
         cb.sync_wait()
-        print(2)
         return cb.response

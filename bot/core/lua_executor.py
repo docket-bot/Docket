@@ -10,10 +10,19 @@ if TYPE_CHECKING:
     from bot.bot import Bot
 
 INITIAL_LUA = "function (code, env) load(code, nil, nil, env)() end"
+SAFE_BUILTINS = [
+    "tostring",
+]
 
 
 def get_env(bot: Bot, guild: int) -> dict[str, Any]:
-    return {"send_message": callbacks.send_message(bot, guild)}
+    return {
+        # callbacks
+        "send_message": callbacks.send_message(bot, guild),
+    } | {
+        # builtins
+        name: bot.lua_runtime.eval(name) for name in SAFE_BUILTINS
+    }
 
 
 def execute_lua(
