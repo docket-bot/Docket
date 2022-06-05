@@ -1,4 +1,4 @@
-import typing
+from typing import Awaitable, Callable, Type, TypeVar
 
 import crescent
 import hikari
@@ -7,17 +7,16 @@ from bot.core import event_middleware as events
 
 plugin = crescent.Plugin("events")
 
+EVENT = TypeVar("EVENT", bound=Type[hikari.Event])
+
 
 def include_event(
-    event: typing.Type[hikari.Event],
-    callback: typing.Callable[[hikari.Event], typing.Awaitable[None]] = events.default,
-):
+    event: EVENT, callback: Callable[[hikari.Event], Awaitable[None]] = events.default
+) -> None:
     @plugin.include
-    @crescent.event
-    async def inner(_event: event) -> None:
+    @crescent.event(event_type=event)
+    async def _(_event: hikari.Event) -> None:
         await callback(_event)
-
-    return inner
 
 
 include_event(hikari.MessageCreateEvent)
