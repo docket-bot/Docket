@@ -5,7 +5,7 @@ from typing import Any
 # Lua will automatically convert integers that are greater than 32 bits to
 # floats. To deal with inaccuracies caused by this, integers above 32 bits
 # are converted to strings.
-MAX_LUA_INT = pow(2, 32)
+MAX_LUA_INT = 2**32
 
 
 class LuaPyDict(dict):  # type: ignore
