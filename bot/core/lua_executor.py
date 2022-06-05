@@ -11,7 +11,7 @@ from .lua_py_dict import LuaPyDict
 if TYPE_CHECKING:
     from bot.bot import Bot
 
-INITIAL_LUA = "function (code, env) load(code, nil, nil, env)() end"
+INITIAL_LUA = "function (code, env, num) pcall(load(code, tostring(num), 't', env)) end"
 SAFE_BUILTINS = ["tostring"]
 
 

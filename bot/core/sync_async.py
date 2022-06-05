@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 from time import sleep
 from typing import Any, Awaitable, Generic, TypeVar
 
@@ -37,7 +38,8 @@ class SyncAsync:
                 continue
 
             cb = self.callbacks.pop()
-            await cb.complete()
+            with contextlib.suppress(Exception):
+                await cb.complete()
 
     def sync_call(self, awaitable: Awaitable[_T]) -> _T:
         cb = Callback(self, awaitable)
