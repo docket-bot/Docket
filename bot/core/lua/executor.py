@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Any
 
 import lupa
 
-from . import callbacks
-from .lua_py_dict import LuaPyDict
+from bot.core.lua import callbacks
+from bot.core.lua.lua_py_dict import LuaPyDict
 
 if TYPE_CHECKING:
     from bot.bot import Bot

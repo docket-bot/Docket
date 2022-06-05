@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Callable
 
 from bot.core.lua.lua_py_dict import LuaPyDict
 
-from ..serialize import serialize
+from bot.core.serialize import serialize
 
 if TYPE_CHECKING:
     from bot.bot import Bot
