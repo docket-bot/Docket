@@ -5,7 +5,7 @@ import typing
 import attrs
 import hikari
 
-from .dot_dict import DotDict
+from .lua_py_dict import LuaPyDict
 from .lua_executor import execute_lua
 
 BAD_ATTRS = ["app", "shard"]
@@ -18,7 +18,7 @@ def _middleware(
         data = function(event)
         # pretend this is the executor
         code = event.message.content  # type: ignore
-        execute_lua(event.app, event.guild_id, code, DotDict(data))  # type: ignore
+        execute_lua(event.app, event.guild_id, code, LuaPyDict(data))  # type: ignore
 
     return inner
 
