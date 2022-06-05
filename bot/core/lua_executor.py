@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import time
 from typing import TYPE_CHECKING, Any
 
 import lupa
@@ -20,7 +19,6 @@ def get_env(bot: Bot, runtime: Any, guild: int) -> dict[str, Any]:
     return {
         # callbacks
         "send_message": callbacks.send_message(bot, guild),
-        "sleep": time.sleep,
     } | {
         # builtins
         name: runtime.eval(name)
