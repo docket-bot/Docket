@@ -1,2 +1,2 @@
 # bot
-The TagScript Bot
+The Docket Bot
