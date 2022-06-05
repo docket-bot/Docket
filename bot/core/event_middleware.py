@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import typing
 
+from .lua_executor import execute_lua
+
 import attrs
 import hikari
 
@@ -10,11 +12,11 @@ BAD_ATTRS = ["app", "shard"]
 
 def _middleware(
     function: typing.Callable[[hikari.Event], typing.Dict[str, typing.Any]]
-) -> typing.Callable[[hikari.Event], typing.Awaitable[None]]:
-    async def inner(event: hikari.Event) -> None:
+) -> typing.Callable[[hikari.Event], None]:
+    def inner(event: hikari.Event) -> None:
         data = function(event)
-        # Pretend this is the event handler
-        print(data)
+        code = event.message.content  # TODO undo
+        execute_lua(event.app, event.guild_id, code, event.app.lua_runtime, data)
 
     return inner
 
