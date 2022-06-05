@@ -9,11 +9,15 @@ if TYPE_CHECKING:
     from bot.bot import Bot
 
 
-def factory(
+def lua_callable(
     func: Callable[..., Awaitable[Any]]
 ) -> Callable[[Bot, int], Callable[..., Any]]:
+    # generates a function, that when called, will create a lua callable bound to a
+    # specific guild
     def constructor(bot: Bot, guild: int) -> Callable[..., Any]:
+        # when called, binds the initial callback to a guild
         def inner(*args: Any, **kwargs: Any) -> Any:
+            # calls the initial callback using the SyncAsync manager
             return bot.sync_async.sync_call(func(bot, guild, *args, **kwargs))
 
         return inner
@@ -21,7 +25,7 @@ def factory(
     return constructor
 
 
-@factory
+@lua_callable
 async def send_message(bot: Bot, guild: int, channel: str, message: str) -> LuaPyDict:
     ch_id = int(channel)
     ch = bot.cache.get_guild_channel(ch_id)
