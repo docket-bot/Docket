@@ -5,8 +5,8 @@ import typing
 import attrs
 import hikari
 
-from .lua_py_dict import LuaPyDict
 from .lua_executor import execute_lua
+from .lua_py_dict import LuaPyDict
 
 BAD_ATTRS = ["app", "shard"]
 

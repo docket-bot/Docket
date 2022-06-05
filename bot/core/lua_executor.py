@@ -18,7 +18,7 @@ SAFE_BUILTINS = ["tostring"]
 def get_env(bot: Bot, runtime: Any, guild: int) -> dict[str, Any]:
     return {
         # callbacks
-        "send_message": callbacks.send_message(bot, guild),
+        "send_message": callbacks.send_message(bot, guild)
     } | {
         # builtins
         name: runtime.eval(name)
