@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-import time
 import asyncio
-from typing import Any, TYPE_CHECKING
+import time
+from typing import TYPE_CHECKING, Any
 
 import lupa
-from .dot_dict import DotDict
+
 from . import callbacks
+from .dot_dict import DotDict
 
 if TYPE_CHECKING:
     from bot.bot import Bot
@@ -27,17 +28,11 @@ def get_env(bot: Bot, runtime: Any, guild: int) -> dict[str, Any]:
     }
 
 
-def execute_lua(
-    bot: Bot, guild: int, code: str, ctx: DotDict
-) -> None:
-    asyncio.get_event_loop().run_in_executor(
-        None, _execute_lua, bot, guild, code, ctx
-    )
+def execute_lua(bot: Bot, guild: int, code: str, ctx: DotDict) -> None:
+    asyncio.get_event_loop().run_in_executor(None, _execute_lua, bot, guild, code, ctx)
 
 
-def _execute_lua(
-    bot: Bot, guild: int, code: str, ctx: DotDict
-) -> Any:
+def _execute_lua(bot: Bot, guild: int, code: str, ctx: DotDict) -> Any:
     runtime = lupa.LuaRuntime()
     lua_func = runtime.eval(INITIAL_LUA)
     env = get_env(bot, runtime, guild)

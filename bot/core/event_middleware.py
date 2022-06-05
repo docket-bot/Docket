@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import typing
 
-from .lua_executor import execute_lua
-from .dot_dict import DotDict
-
 import attrs
 import hikari
+
+from .dot_dict import DotDict
+from .lua_executor import execute_lua
 
 BAD_ATTRS = ["app", "shard"]
 
@@ -17,8 +17,8 @@ def _middleware(
     def inner(event: hikari.Event) -> None:
         data = function(event)
         # pretend this is the executor
-        code = event.message.content  # TODO undo
-        execute_lua(event.app, event.guild_id, code, DotDict(data))
+        code = event.message.content  # type: ignore
+        execute_lua(event.app, event.guild_id, code, DotDict(data))  # type: ignore
 
     return inner
 

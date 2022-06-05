@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Awaitable, Callable, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Awaitable, Callable
 
 if TYPE_CHECKING:
     from bot.bot import Bot
@@ -19,9 +19,7 @@ def factory(
 
 
 @factory
-async def send_message(
-    bot: Bot, guild: int, channel: str, message: str
-) -> None:
+async def send_message(bot: Bot, guild: int, channel: str, message: str) -> None:
     ch_id = int(channel)
     ch = bot.cache.get_guild_channel(ch_id)
     assert ch and ch.guild_id == guild

@@ -2,7 +2,6 @@ import asyncio
 from typing import Any
 
 import crescent
-import lupa
 
 from bot.config import CONFIG
 from bot.core.sync_async import SyncAsync
