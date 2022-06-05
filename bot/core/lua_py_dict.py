@@ -5,7 +5,7 @@ from typing import Any
 MAX_LUA_INT = 982688721935675392
 
 
-class LuaPyDict(dict[str, Any]):
+class LuaPyDict(dict):  # type: ignore
     def __getitem__(self, key: str) -> Any:
         val = super().__getitem__(key)
         if isinstance(val, dict):
