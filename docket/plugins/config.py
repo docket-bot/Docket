@@ -77,6 +77,7 @@ class CreateScript:
     name = crescent.option(str, "The name of the script")
 
     async def callback(self, ctx: crescent.Context) -> None:
+        name = self.name.lower().casefold().replace(" ", "-")
         assert ctx.guild_id
         await ctx.respond(
             "Please send the Lua script (either in a code block or file "
@@ -89,12 +90,13 @@ class CreateScript:
         await Guild.goc(ctx.guild_id)
         try:
             await Script(
-                guild_id=ctx.guild_id, name=self.name, code=content
+                guild_id=ctx.guild_id, name=name, code=content
             ).create()
         except asyncpg.UniqueViolationError:
             await ctx.edit("A script with that name already exists.")
+            return
 
-        await ctx.edit(f"Script '{self.name}' created.")
+        await ctx.edit(f"Script '{name}' created.")
 
 
 @plugin.include
@@ -235,7 +237,9 @@ class DeleteEventTrigger:
         if not script:
             raise ScriptNotFound(self.script)
 
-        event = await EventTrigger.exists(guild_id=ctx.guild_id, event_type=self.event)
+        event = await EventTrigger.exists(
+            guild_id=ctx.guild_id, event_type=self.event
+        )
         if not event:
             raise DocketBaseError("This event doesn't trigger this script.")
 
@@ -258,9 +262,6 @@ class ViewEventTriggers:
             .where(guild_id=ctx.guild_id)
             .fetchmany()
         )
-        if not events:
-            raise DocketBaseError("This server has no event triggers.")
-
         result: list[str] = []
         for event in events:
             scripts: list[Script] = await event.scripts.fetchmany()  # type: ignore
@@ -268,8 +269,15 @@ class ViewEventTriggers:
                 continue
 
             event_name = EVENT_ID_MAP[event.event_type].__name__
-            result.append(
-                f"-{event_name}: {', '.join(s.name for s in scripts)}"
-            )
+            script_str = "\n - ".join(s.name for s in scripts)
+            result.append(f"{event_name}:\n - {script_str}")
 
-        await ctx.respond("\n".join(result))
+        if not result:
+            raise DocketBaseError("This server has no event triggers.")
+
+        embed = hikari.Embed(
+            title="Event Triggers",
+            description="\n".join(result),
+            color=CONFIG.theme,
+        )
+        await ctx.respond(embed=embed)
