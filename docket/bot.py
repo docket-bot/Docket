@@ -25,6 +25,8 @@ class Docket(crescent.Bot):
         await self.database.connect()
         return await super().start(*args, **kwargs)
 
-    async def _close(self) -> None:
-        await self.database.cleanup()
-        return await super().close()
+    async def join(self, until_close: bool = True) -> None:
+        try:
+            await super().join(until_close)
+        finally:
+            await self.database.cleanup()
