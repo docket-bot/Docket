@@ -57,7 +57,12 @@
                 "name": "_scripts_script_id_primary_key",
                 "raw_sql": "CONSTRAINT _scripts_script_id_primary_key PRIMARY KEY ( script_id )"
             },
-            "unique_constraints": [],
+            "unique_constraints": [
+                {
+                    "name": "guild_name_unique",
+                    "raw_sql": "CONSTRAINT guild_name_unique UNIQUE ( name , guild_id )"
+                }
+            ],
             "check_constraints": [],
             "exclude_constraints": []
         },

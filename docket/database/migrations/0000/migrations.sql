@@ -30,6 +30,7 @@ CREATE INDEX _hash_index_scripts__guild_id ON scripts USING HASH ( ( guild_id ) 
 CREATE INDEX _hash_index_scripts__name ON scripts USING HASH ( ( name ) );
 CREATE INDEX _hash_index_event_triggers__guild_id ON event_triggers USING HASH ( ( guild_id ) );
 CREATE INDEX _hash_index_event_triggers__event_type ON event_triggers USING HASH ( ( event_type ) );
+ALTER TABLE scripts ADD CONSTRAINT guild_name_unique UNIQUE ( name , guild_id );
 ALTER TABLE event_triggers ADD CONSTRAINT guild_event_unique UNIQUE ( guild_id , event_type );
 ALTER TABLE guilds ADD CONSTRAINT _guilds_guild_id_primary_key PRIMARY KEY ( guild_id );
 ALTER TABLE scripts ADD CONSTRAINT _scripts_script_id_primary_key PRIMARY KEY ( script_id );
