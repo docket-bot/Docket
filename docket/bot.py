@@ -15,6 +15,7 @@ class Docket(crescent.Bot):
         self.plugins.load("docket.plugins.info")
         self.plugins.load("docket.plugins.events")
         self.plugins.load("docket.plugins.config")
+        self.plugins.load("docket.plugins.error")
 
         self.sync_async = SyncAsync()
         self.database = Database()
