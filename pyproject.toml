@@ -15,7 +15,7 @@ lupa = "^1.13"
 black = "^22.3.0"
 flake8 = "^4.0.1"
 isort = "^5.10.1"
-mypy = "^0.960"
+mypy = "^0.961"
 nox = "^2022.1.7"
 
 [build-system]
