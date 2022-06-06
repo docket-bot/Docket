@@ -2,7 +2,7 @@
 authors = ["CircuitSacul <circuitsacul@icloud.com>", "Lunarmagpie <Bambolambo0@gmail.com>", "trag1c <trag1cdev@yahoo.com>"]
 description = "The Docket Bot"
 license = "MIT"
-name = "bot"
+name = "docket"
 version = "0.1.0"
 
 [tool.poetry.dependencies]
