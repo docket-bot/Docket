@@ -1,2 +1,2 @@
-# bot
+# Docket
 The Docket Bot

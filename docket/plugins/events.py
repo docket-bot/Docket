@@ -3,7 +3,7 @@ from typing import Callable, Type, TypeVar
 import crescent
 import hikari
 
-from bot.core import event_middleware
+from docket.core import event_middleware
 
 plugin = crescent.Plugin("events")
 
