@@ -8,7 +8,7 @@ import asyncpg
 import crescent
 import hikari
 
-from docket.database.database import EVENT_MAP, Script, goc_guild
+from docket.database.database import EVENT_ID_MAP, EVENT_MAP, Script, goc_guild
 from docket.errors import DocketBaseError
 from docket.plugins._checks import has_guild_perms
 from docket.plugins._group import docket_group
@@ -109,3 +109,69 @@ class DeleteScript:
             raise DocketBaseError(f"No script with name '{self.name}' exists.")
         await script.delete()
         await ctx.respond(f"Script '{self.name}' deleted.")
+
+
+@plugin.include
+@scripts.child
+@crescent.command(name="edit", description="Edit a script")
+class EditScript:
+    name = crescent.option(
+        str, "The name of the script", autocomplete=script_name_autocomplete
+    )
+
+    async def callback(self, ctx: crescent.Context) -> None:
+        assert ctx.guild_id
+        script = await Script.exists(name=self.name, guild_id=ctx.guild_id)
+        if not script:
+            raise DocketBaseError(f"No script with name '{self.name}' exists.")
+        await ctx.respond(
+            "Please send the Lua script (either in a code block or file " "upload)."
+        )
+        content = await wait_for_script(ctx)
+        if not content:
+            await ctx.edit("Script creation timed out.")
+            return
+        script.code = content
+        await script.save()
+        await ctx.respond(f"Script '{self.name}' edited.")
+
+
+@plugin.include
+@scripts.child
+@crescent.command(name="view", description="View a script")
+class ViewScript:
+    name = crescent.option(
+        str,
+        "The name of the script",
+        autocomplete=script_name_autocomplete,
+        default=None,
+    )
+
+    async def callback(self, ctx: crescent.Context) -> None:
+        assert ctx.guild_id
+        if self.name is None:
+            scripts = (
+                await Script.fetch_query().where(guild_id=ctx.guild_id).fetchmany()
+            )
+            if not scripts:
+                raise DocketBaseError("This server has no scripts.")
+
+            script_names: list[str] = []
+            for s in scripts:
+                _event = EVENT_ID_MAP.get(s.script_type)
+                event = _event.__name__ if _event else "Custom"
+                script_names.append(f"{s.name} ({event})")
+            await ctx.respond(
+                "Here are the scripts on this server:\n-" + "\n-".join(script_names)
+            )
+
+        else:
+            script = await Script.exists(name=self.name, guild_id=ctx.guild_id)
+            if not script:
+                raise DocketBaseError(f"No script with name '{self.name}' exists.")
+
+            _event = EVENT_ID_MAP.get(script.script_type)
+            event = _event.__name__ if _event else "Custom"
+            await ctx.respond(
+                f"Script '{script.name}' ({event}):\n```lua\n{script.code}\n```"
+            )

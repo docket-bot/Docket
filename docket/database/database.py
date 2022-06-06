@@ -10,6 +10,7 @@ from apgorm import ForeignKey, Index, IndexType, Model, types
 from docket.config import CONFIG
 
 EVENT_MAP: dict[type[hikari.Event], int] = {hikari.GuildMessageCreateEvent: 2}
+EVENT_ID_MAP: dict[int, type[hikari.Event]] = {v: k for k, v in EVENT_MAP.items()}
 VALID_TYPES = {0, 1} | set(EVENT_MAP.values())
 
 
