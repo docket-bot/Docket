@@ -8,7 +8,9 @@ from apgorm import LazyList
 from docket.core.lua.executor import execute_lua
 from docket.core.lua.lua_py_dict import LuaPyDict
 from docket.core.serialize import serialize
-from docket.database.database import EVENT_MAP, Script
+from docket.database.models.event import EventTrigger
+from docket.database.models.script import Script
+from docket.events import EVENT_MAP
 
 if typing.TYPE_CHECKING:
     from docket.bot import Docket
@@ -16,12 +18,13 @@ if typing.TYPE_CHECKING:
 
 async def get_scripts(  # TODO: cache
     guild_id: int, event: type[hikari.Event]
-) -> LazyList[typing.Any, Script]:
-    return (
-        await Script.fetch_query()
-        .where(guild_id=guild_id, script_type=EVENT_MAP[event])
-        .fetchmany()
+) -> LazyList[typing.Any, Script] | None:
+    event_trigger = await EventTrigger.exists(
+        guild_id=guild_id, event_type=EVENT_MAP[event]
     )
+    if not event_trigger:
+        return None
+    return await event_trigger.scripts.fetchmany()  # type: ignore
 
 
 def _middleware(
@@ -29,7 +32,10 @@ def _middleware(
 ) -> typing.Callable[[hikari.Event], typing.Awaitable[None]]:
     async def inner(event: hikari.Event) -> None:
         guild_id = typing.cast(int, event.guild_id)  # type: ignore
-        for script in await get_scripts(guild_id, type(event)):
+        scripts = await get_scripts(guild_id, type(event))
+        if not scripts:
+            return
+        for script in scripts:
             execute_lua(
                 typing.cast("Docket", event.app),
                 guild_id,

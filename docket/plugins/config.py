@@ -8,13 +8,11 @@ import asyncpg
 import crescent
 import hikari
 
-from docket.database.database import EVENT_ID_MAP, EVENT_MAP, Script, goc_guild
+from docket.database.models.guild import Guild
+from docket.database.models.script import Script
 from docket.errors import DocketBaseError
 from docket.plugins._checks import has_guild_perms
 from docket.plugins._group import docket_group
-
-TYPE_CHOICES = [("Custom", 0), *[(val.__name__, key) for val, key in EVENT_MAP.items()]]
-
 
 plugin = crescent.Plugin(
     "config", command_hooks=[has_guild_perms(hikari.Permissions.MANAGE_GUILD)]
@@ -65,9 +63,6 @@ async def script_name_autocomplete(
 @crescent.command(name="create", description="Create a new script")
 class CreateScript:
     name = crescent.option(str, "The name of the script")
-    event = crescent.option(
-        int, "The event this script will run on", choices=TYPE_CHOICES
-    )
 
     async def callback(self, ctx: crescent.Context) -> None:
         assert ctx.guild_id
@@ -78,14 +73,9 @@ class CreateScript:
         if not content:
             await ctx.edit("Script creation timed out.")
 
-        await goc_guild(ctx.guild_id)
+        await Guild.goc(ctx.guild_id)
         try:
-            await Script(
-                guild_id=ctx.guild_id,
-                name=self.name,
-                code=content,
-                script_type=self.event,
-            ).create()
+            await Script(guild_id=ctx.guild_id, name=self.name, code=content).create()
         except asyncpg.UniqueViolationError:
             await ctx.edit("A script with that name already exists.")
 
@@ -154,13 +144,9 @@ class ViewScript:
             if not scripts:
                 raise DocketBaseError("This server has no scripts.")
 
-            script_names: list[str] = []
-            for s in scripts:
-                _event = EVENT_ID_MAP.get(s.script_type)
-                event = _event.__name__ if _event else "Custom"
-                script_names.append(f"{s.name} ({event})")
             await ctx.respond(
-                "Here are the scripts on this server:\n-" + "\n-".join(script_names)
+                "Here are the scripts on this server:\n-"
+                + "\n-".join(s.name for s in scripts)
             )
 
         else:
@@ -168,8 +154,4 @@ class ViewScript:
             if not script:
                 raise DocketBaseError(f"No script with name '{self.name}' exists.")
 
-            _event = EVENT_ID_MAP.get(script.script_type)
-            event = _event.__name__ if _event else "Custom"
-            await ctx.respond(
-                f"Script '{script.name}' ({event}):\n```lua\n{script.code}\n```"
-            )
+            await ctx.respond(f"Script '{script.name}':\n```lua\n{script.code}\n```")
