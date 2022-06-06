@@ -15,7 +15,7 @@ class EventTrigger(Model):
         "trigger_id",
         "event_trigger_scripts.trigger_id",
         "event_trigger_scripts.script_id",
-        "script_id",
+        "scripts.script_id",
     )
     guild_event_unique = Unique(guild_id, event_type)
 
