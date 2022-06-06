@@ -11,8 +11,8 @@ class Docket(crescent.Bot):
     def __init__(self) -> None:
         super().__init__(token=CONFIG.discord_token)
 
-        self.plugins.load("bot.plugins.info")
-        self.plugins.load("bot.plugins.events")
+        self.plugins.load("docket.plugins.info")
+        self.plugins.load("docket.plugins.events")
 
         self.sync_async = SyncAsync()
 
