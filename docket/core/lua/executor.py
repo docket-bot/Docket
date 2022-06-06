@@ -11,7 +11,15 @@ from docket.core.lua.lua_py_dict import LuaPyDict
 if TYPE_CHECKING:
     from docket.bot import Docket
 
-INITIAL_LUA = "function (code, env) pcall(load(code, nil, 't', env)) end"
+INITIAL_LUA = """
+function (code, env, quota)
+    local function timeout()
+        error("Quota exceeded");
+    end;
+    debug.sethook(timeout, "", quota);
+    load(code, nil, 't', env)();
+end;
+"""
 SAFE_BUILTINS = ["tostring", "tonumber", "math"]
 
 
@@ -39,4 +47,4 @@ def _execute_lua(bot: Docket, guild: int, code: str, ctx: LuaPyDict) -> Any:
     lua_func = runtime.eval(INITIAL_LUA)
     env = get_env(bot, runtime, guild)
     env["ctx"] = ctx
-    return lua_func(code, env)
+    return lua_func(code, env, 500_000)
