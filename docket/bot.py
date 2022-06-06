@@ -5,6 +5,7 @@ import crescent
 
 from docket.config import CONFIG
 from docket.core.sync_async import SyncAsync
+from docket.database.database import Database
 
 
 class Docket(crescent.Bot):
@@ -15,9 +16,15 @@ class Docket(crescent.Bot):
         self.plugins.load("docket.plugins.events")
 
         self.sync_async = SyncAsync()
+        self.database = Database()
 
     async def start(self, *args: Any, **kwargs: Any) -> None:
         self.sync_async_task = asyncio.create_task(
             self.sync_async.complete_callbacks_loop()
         )
+        await self.database.connect()
         return await super().start(*args, **kwargs)
+
+    async def _close(self) -> None:
+        await self.database.cleanup()
+        return await super().close()

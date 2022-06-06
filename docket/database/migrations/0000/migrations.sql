@@ -1,0 +1,15 @@
+CREATE TABLE triggers ();
+CREATE TABLE _migrations ();
+ALTER TABLE triggers ADD COLUMN name TEXT;
+ALTER TABLE triggers ADD COLUMN guild_id NUMERIC;
+ALTER TABLE triggers ADD COLUMN script_type SMALLINT;
+ALTER TABLE triggers ADD COLUMN code TEXT;
+ALTER TABLE _migrations ADD COLUMN id_ INTEGER;
+ALTER TABLE triggers ALTER COLUMN name SET NOT NULL;
+ALTER TABLE triggers ALTER COLUMN guild_id SET NOT NULL;
+ALTER TABLE triggers ALTER COLUMN script_type SET NOT NULL;
+ALTER TABLE triggers ALTER COLUMN code SET NOT NULL;
+ALTER TABLE _migrations ALTER COLUMN id_ SET NOT NULL;
+CREATE INDEX _hash_index_triggers__script_type ON triggers USING HASH ( ( script_type ) );
+ALTER TABLE triggers ADD CONSTRAINT _triggers_name_guild_id_primary_key PRIMARY KEY ( name , guild_id );
+ALTER TABLE _migrations ADD CONSTRAINT __migrations_id__primary_key PRIMARY KEY ( id_ );
