@@ -26,3 +26,20 @@ requires = ["poetry-core>=1.0.0"]
 line-length=88
 skip-magic-trailing-comma=true
 target-version=['py38']
+
+[tool.mypy]
+warn_return_any = true
+warn_unused_configs = true
+namespace_packages = true
+strict = true
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+  "lupa.*"
+]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
