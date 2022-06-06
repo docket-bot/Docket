@@ -7,6 +7,7 @@ from typing import cast
 import asyncpg
 import crescent
 import hikari
+from docket.config import CONFIG
 
 from docket.database.models.guild import Guild
 from docket.database.models.script import Script
@@ -161,19 +162,24 @@ class ViewScript:
             if not scripts:
                 raise DocketBaseError("This server has no scripts.")
 
-            await ctx.respond(
-                "Here are the scripts on this server:\n-"
-                + "\n-".join(s.name for s in scripts)
+            embed = hikari.Embed(
+                title="Server Scripts",
+                description="-" + "\n-".join(s.name for s in scripts),
+                color=CONFIG.theme,
             )
+            await ctx.respond(embed=embed)
 
         else:
             script = await Script.exists(name=self.name, guild_id=ctx.guild_id)
             if not script:
                 raise ScriptNotFound(self.name)
 
-            await ctx.respond(
-                f"Script '{script.name}':\n```lua\n{script.code}\n```"
+            embed = hikari.Embed(
+                title=f"Script '{script.name}'",
+                description=f"```lua\n{script.code}\n```",
+                color=CONFIG.theme,
             )
+            await ctx.respond(embed=embed)
 
 
 # EVENT TRIGGER MANAGEMENT
@@ -238,3 +244,32 @@ class DeleteEventTrigger:
         await ctx.respond(
             f"Script '{self.script}' will no longer be run on '{event_name}'."
         )
+
+
+@plugin.include
+@events.child
+@crescent.command(name="view", description="View event triggers")
+class ViewEventTriggers:
+    async def callback(self, ctx: crescent.Context) -> None:
+        assert ctx.guild_id
+
+        events = (
+            await EventTrigger.fetch_query()
+            .where(guild_id=ctx.guild_id)
+            .fetchmany()
+        )
+        if not events:
+            raise DocketBaseError("This server has no event triggers.")
+
+        result: list[str] = []
+        for event in events:
+            scripts: list[Script] = await event.scripts.fetchmany()  # type: ignore
+            if not scripts:
+                continue
+
+            event_name = EVENT_ID_MAP[event.event_type].__name__
+            result.append(
+                f"-{event_name}: {', '.join(s.name for s in scripts)}"
+            )
+
+        await ctx.respond("\n".join(result))

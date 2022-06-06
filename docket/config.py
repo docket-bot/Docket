@@ -9,6 +9,7 @@ class Config:
     db_name: str = "docket"
     db_user: str = "docket"
     db_host: str = "localhost"
+    theme: int = 0x21BE93
 
 
 with open(".config.json") as f:
