@@ -4,9 +4,9 @@ import typing
 
 import hikari
 
-from bot.core.lua.executor import execute_lua
-from bot.core.lua.lua_py_dict import LuaPyDict
-from bot.core.serialize import serialize
+from docket.core.lua.executor import execute_lua
+from docket.core.lua.lua_py_dict import LuaPyDict
+from docket.core.serialize import serialize
 
 
 def _middleware(

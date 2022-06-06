@@ -3,11 +3,11 @@ from typing import Any
 
 import crescent
 
-from bot.config import CONFIG
-from bot.core.sync_async import SyncAsync
+from docket.config import CONFIG
+from docket.core.sync_async import SyncAsync
 
 
-class Bot(crescent.Bot):
+class Docket(crescent.Bot):
     def __init__(self) -> None:
         super().__init__(token=CONFIG.discord_token)
 

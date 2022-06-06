@@ -5,17 +5,17 @@ from typing import TYPE_CHECKING, Any
 
 import lupa
 
-from bot.core.lua import callbacks
-from bot.core.lua.lua_py_dict import LuaPyDict
+from docket.core.lua import callbacks
+from docket.core.lua.lua_py_dict import LuaPyDict
 
 if TYPE_CHECKING:
-    from bot.bot import Bot
+    from docket.bot import Docket
 
 INITIAL_LUA = "function (code, env) pcall(load(code, nil, 't', env)) end"
 SAFE_BUILTINS = ["tostring", "tonumber", "math"]
 
 
-def get_env(bot: Bot, runtime: Any, guild: int) -> dict[str, Any]:
+def get_env(bot: Docket, runtime: Any, guild: int) -> dict[str, Any]:
     env = {
         # callbacks
         "send_message": callbacks.send_message(bot, guild)
@@ -30,11 +30,11 @@ def get_env(bot: Bot, runtime: Any, guild: int) -> dict[str, Any]:
     return env
 
 
-def execute_lua(bot: Bot, guild: int, code: str, ctx: LuaPyDict) -> None:
+def execute_lua(bot: Docket, guild: int, code: str, ctx: LuaPyDict) -> None:
     asyncio.get_event_loop().run_in_executor(None, _execute_lua, bot, guild, code, ctx)
 
 
-def _execute_lua(bot: Bot, guild: int, code: str, ctx: LuaPyDict) -> Any:
+def _execute_lua(bot: Docket, guild: int, code: str, ctx: LuaPyDict) -> Any:
     runtime = lupa.LuaRuntime()
     lua_func = runtime.eval(INITIAL_LUA)
     env = get_env(bot, runtime, guild)
