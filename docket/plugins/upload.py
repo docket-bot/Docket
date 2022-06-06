@@ -77,4 +77,4 @@ async def upload(ctx: crescent.Context, message: hikari.Message) -> None:
     lua = lua_content
 
     # Temporary
-    await ctx.respond(f"```yaml\n{data}\n```" f"```lua\n{lua}\n```", ephemeral=True)
+    await ctx.respond(f"```yaml\n{data}\n``````lua\n{lua}\n```", ephemeral=True)
