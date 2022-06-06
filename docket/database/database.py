@@ -1,11 +1,12 @@
 from __future__ import annotations
+
 from typing import Any
 
 import hikari
-from apgorm import Database as BaseDB, ForeignKey, Model, types, Index, IndexType
+from apgorm import Database as BaseDB
+from apgorm import ForeignKey, Index, IndexType, Model, types
 
 from docket.config import CONFIG
-
 
 EVENT_MAP: dict[type[hikari.Event], int] = {hikari.GuildMessageCreateEvent: 2}
 VALID_TYPES = {0, 1} | set(EVENT_MAP.values())

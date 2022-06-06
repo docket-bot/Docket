@@ -8,20 +8,20 @@ from apgorm import LazyList
 from docket.core.lua.executor import execute_lua
 from docket.core.lua.lua_py_dict import LuaPyDict
 from docket.core.serialize import serialize
-from docket.database.database import Script, EVENT_MAP
+from docket.database.database import EVENT_MAP, Script
 
 if typing.TYPE_CHECKING:
     from docket.bot import Docket
 
 
 async def get_scripts(  # TODO: cache
-    guild_id: int,
-    event: type[hikari.Event],
+    guild_id: int, event: type[hikari.Event]
 ) -> LazyList[typing.Any, Script]:
-    return await Script.fetch_query().where(
-        guild_id=guild_id,
-        script_type=EVENT_MAP[event],
-    ).fetchmany()
+    return (
+        await Script.fetch_query()
+        .where(guild_id=guild_id, script_type=EVENT_MAP[event])
+        .fetchmany()
+    )
 
 
 def _middleware(

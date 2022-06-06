@@ -12,9 +12,7 @@ EVENT = TypeVar("EVENT", bound=Type[hikari.Event])
 
 def include_event(
     event: EVENT,
-    callback: Callable[
-        [hikari.Event], Awaitable[None]
-    ] = event_middleware.default,
+    callback: Callable[[hikari.Event], Awaitable[None]] = event_middleware.default,
 ) -> None:
     @plugin.include
     @crescent.event(event_type=event)
