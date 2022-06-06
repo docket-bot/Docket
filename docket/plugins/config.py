@@ -7,15 +7,15 @@ from typing import cast
 import asyncpg
 import crescent
 import hikari
-from docket.config import CONFIG
 
+from docket.config import CONFIG
+from docket.database.models.event import EventTrigger
 from docket.database.models.guild import Guild
 from docket.database.models.script import Script
-from docket.database.models.event import EventTrigger
 from docket.errors import DocketBaseError, ScriptNotFound
+from docket.events import EVENT_ID_MAP, EVENT_MAP
 from docket.plugins._checks import has_guild_perms
 from docket.plugins._group import docket_group
-from docket.events import EVENT_ID_MAP, EVENT_MAP
 
 EVENT_CHOICES = [(k.__name__, v) for k, v in EVENT_MAP.items()]
 
@@ -31,10 +31,7 @@ async def wait_for_script(ctx: crescent.Context) -> str | None:
         return (
             message.channel_id == ctx.channel_id
             and message.author.id == ctx.user.id
-            and (
-                message.content is not None
-                or message.message.attachments is not None
-            )
+            and (message.content is not None or message.message.attachments is not None)
         )
 
     try:
@@ -59,9 +56,7 @@ async def script_name_autocomplete(
     if not ctx.guild_id:
         return []
     prefix = cast(str, option.value)
-    scripts = (
-        await Script.fetch_query().where(guild_id=ctx.guild_id).fetchmany()
-    )
+    scripts = await Script.fetch_query().where(guild_id=ctx.guild_id).fetchmany()
     script_names = [script.name for script in scripts]
     return [
         hikari.CommandChoice(name=name, value=name)
@@ -80,8 +75,7 @@ class CreateScript:
         name = self.name.lower().casefold().replace(" ", "-")
         assert ctx.guild_id
         await ctx.respond(
-            "Please send the Lua script (either in a code block or file "
-            "upload)."
+            "Please send the Lua script (either in a code block or file " "upload)."
         )
         content = await wait_for_script(ctx)
         if not content:
@@ -89,9 +83,7 @@ class CreateScript:
 
         await Guild.goc(ctx.guild_id)
         try:
-            await Script(
-                guild_id=ctx.guild_id, name=name, code=content
-            ).create()
+            await Script(guild_id=ctx.guild_id, name=name, code=content).create()
         except asyncpg.UniqueViolationError:
             await ctx.edit("A script with that name already exists.")
             return
@@ -130,8 +122,7 @@ class EditScript:
         if not script:
             raise ScriptNotFound(self.name)
         await ctx.respond(
-            "Please send the Lua script (either in a code block or file "
-            "upload)."
+            "Please send the Lua script (either in a code block or file " "upload)."
         )
         content = await wait_for_script(ctx)
         if not content:
@@ -157,9 +148,7 @@ class ViewScript:
         assert ctx.guild_id
         if self.name is None:
             scripts = (
-                await Script.fetch_query()
-                .where(guild_id=ctx.guild_id)
-                .fetchmany()
+                await Script.fetch_query().where(guild_id=ctx.guild_id).fetchmany()
             )
             if not scripts:
                 raise DocketBaseError("This server has no scripts.")
@@ -193,9 +182,7 @@ class CreateEventTrigger:
         int, "The event to trigger the script on", choices=EVENT_CHOICES
     )
     script = crescent.option(
-        str,
-        "The name of the script to trigger",
-        autocomplete=script_name_autocomplete,
+        str, "The name of the script to trigger", autocomplete=script_name_autocomplete
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
@@ -213,9 +200,7 @@ class CreateEventTrigger:
             ) from e
 
         event_name = EVENT_ID_MAP[self.event].__name__
-        await ctx.respond(
-            f"Script '{self.script}' will be run on '{event_name}'."
-        )
+        await ctx.respond(f"Script '{self.script}' will be run on '{event_name}'.")
 
 
 @plugin.include
@@ -237,9 +222,7 @@ class DeleteEventTrigger:
         if not script:
             raise ScriptNotFound(self.script)
 
-        event = await EventTrigger.exists(
-            guild_id=ctx.guild_id, event_type=self.event
-        )
+        event = await EventTrigger.exists(guild_id=ctx.guild_id, event_type=self.event)
         if not event:
             raise DocketBaseError("This event doesn't trigger this script.")
 
@@ -258,9 +241,7 @@ class ViewEventTriggers:
         assert ctx.guild_id
 
         events = (
-            await EventTrigger.fetch_query()
-            .where(guild_id=ctx.guild_id)
-            .fetchmany()
+            await EventTrigger.fetch_query().where(guild_id=ctx.guild_id).fetchmany()
         )
         result: list[str] = []
         for event in events:
@@ -276,8 +257,6 @@ class ViewEventTriggers:
             raise DocketBaseError("This server has no event triggers.")
 
         embed = hikari.Embed(
-            title="Event Triggers",
-            description="\n".join(result),
-            color=CONFIG.theme,
+            title="Event Triggers", description="\n".join(result), color=CONFIG.theme
         )
         await ctx.respond(embed=embed)
