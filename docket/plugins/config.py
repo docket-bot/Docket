@@ -133,7 +133,7 @@ class EditScript:
             return
         script.code = content
         await script.save()
-        await ctx.respond(f"Script '{self.name}' edited.")
+        await ctx.edit(f"Script '{self.name}' edited.")
 
 
 @plugin.include
