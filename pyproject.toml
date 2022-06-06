@@ -10,6 +10,8 @@ hikari = "^2.0.0-alpha.108"
 hikari-crescent = "^0.1.0"
 python = ">=3.8,<3.11"
 lupa = "^1.13"
+PyYAML = "^6.0"
+types-PyYAML = "^6.0.8"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
