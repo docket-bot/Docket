@@ -2,13 +2,20 @@ from __future__ import annotations
 from typing import Any
 
 import hikari
-from apgorm import Database as BaseDB, Model, types, Index, IndexType
+from apgorm import Database as BaseDB, ForeignKey, Model, types, Index, IndexType
 
 from docket.config import CONFIG
 
 
 EVENT_MAP: dict[type[hikari.Event], int] = {hikari.GuildMessageCreateEvent: 2}
 VALID_TYPES = {0, 1} | set(EVENT_MAP.values())
+
+
+class Guild(Model):
+    guild_id = types.Numeric().field()
+    log_channel = types.Numeric().nullablefield()
+
+    primary_key = (guild_id,)
 
 
 class Script(Model):
@@ -21,10 +28,13 @@ class Script(Model):
     script_type.add_validator(lambda event_type: event_type in VALID_TYPES)
     code.add_validator(lambda code: len(code) <= 1_024)
 
+    guild_fq = ForeignKey(guild_id, Guild.guild_id)
+
     primary_key = (name, guild_id)
 
 
 class Database(BaseDB):
+    guilds = Guild
     triggers = Script
 
     indexes = [Index(Script, Script.script_type, IndexType.HASH)]

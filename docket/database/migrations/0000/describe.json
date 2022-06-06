@@ -1,6 +1,29 @@
 {
     "tables": [
         {
+            "name": "guilds",
+            "fields": [
+                {
+                    "name": "guild_id",
+                    "type_": "NUMERIC",
+                    "not_null": true
+                },
+                {
+                    "name": "log_channel",
+                    "type_": "NUMERIC",
+                    "not_null": false
+                }
+            ],
+            "fk_constraints": [],
+            "pk_constraint": {
+                "name": "_guilds_guild_id_primary_key",
+                "raw_sql": "CONSTRAINT _guilds_guild_id_primary_key PRIMARY KEY ( guild_id )"
+            },
+            "unique_constraints": [],
+            "check_constraints": [],
+            "exclude_constraints": []
+        },
+        {
             "name": "triggers",
             "fields": [
                 {
@@ -24,7 +47,12 @@
                     "not_null": true
                 }
             ],
-            "fk_constraints": [],
+            "fk_constraints": [
+                {
+                    "name": "guild_fq",
+                    "raw_sql": "CONSTRAINT guild_fq FOREIGN KEY ( guild_id ) REFERENCES guilds ( guild_id ) MATCH SIMPLE ON DELETE CASCADE ON UPDATE CASCADE"
+                }
+            ],
             "pk_constraint": {
                 "name": "_triggers_name_guild_id_primary_key",
                 "raw_sql": "CONSTRAINT _triggers_name_guild_id_primary_key PRIMARY KEY ( name , guild_id )"
