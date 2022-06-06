@@ -7,7 +7,7 @@ from apgorm import Database as BaseDB, Model, types, Index, IndexType
 from docket.config import CONFIG
 
 
-EVENT_MAP = {hikari.GuildMessageCreateEvent: 2}
+EVENT_MAP: dict[type[hikari.Event], int] = {hikari.GuildMessageCreateEvent: 2}
 VALID_TYPES = {0, 1} | set(EVENT_MAP.values())
 
 
