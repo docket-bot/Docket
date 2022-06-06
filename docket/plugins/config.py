@@ -42,9 +42,7 @@ async def wait_for_script(ctx: crescent.Context) -> str | None:
         content = str(await attachment.read())
     else:
         content = msg.message.content
-        if content.startswith("```lua"):
-            content = content.lstrip("```lua")
-        content = msg.message.content.strip("```")
+        content = msg.message.content.strip("```lua\n").strip("```")
     return content
 
 
