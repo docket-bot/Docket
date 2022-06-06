@@ -1,6 +1,10 @@
+import asyncio
+from typing import Any
+
 import crescent
 
 from bot.config import CONFIG
+from bot.core.sync_async import SyncAsync
 
 
 class Bot(crescent.Bot):
@@ -9,3 +13,11 @@ class Bot(crescent.Bot):
 
         self.plugins.load("bot.plugins.info")
         self.plugins.load("bot.plugins.events")
+
+        self.sync_async = SyncAsync()
+
+    async def start(self, *args: Any, **kwargs: Any) -> None:
+        self.sync_async_task = asyncio.create_task(
+            self.sync_async.complete_callbacks_loop()
+        )
+        return await super().start(*args, **kwargs)
