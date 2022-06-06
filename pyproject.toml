@@ -37,7 +37,8 @@ strict = true
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
 module = [
-  "lupa.*"
+  "lupa.*",
+  "asyncpg.*"
 ]
 
 [tool.isort]
