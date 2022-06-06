@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import asyncpg
 import hikari
 from apgorm import Database as BaseDB
 from apgorm import ForeignKey, Index, IndexType, Model, types
@@ -10,6 +11,13 @@ from docket.config import CONFIG
 
 EVENT_MAP: dict[type[hikari.Event], int] = {hikari.GuildMessageCreateEvent: 2}
 VALID_TYPES = {0, 1} | set(EVENT_MAP.values())
+
+
+async def goc_guild(guild_id: int) -> Guild:
+    try:
+        return await Guild(guild_id=guild_id).create()
+    except asyncpg.UniqueViolationError:
+        return await Guild.fetch(guild_id=guild_id)
 
 
 class Guild(Model):
@@ -36,7 +44,7 @@ class Script(Model):
 
 class Database(BaseDB):
     guilds = Guild
-    triggers = Script
+    scripts = Script
 
     indexes = [Index(Script, Script.script_type, IndexType.HASH)]
 

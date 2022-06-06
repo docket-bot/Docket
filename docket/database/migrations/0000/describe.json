@@ -24,7 +24,7 @@
             "exclude_constraints": []
         },
         {
-            "name": "triggers",
+            "name": "scripts",
             "fields": [
                 {
                     "name": "name",
@@ -54,8 +54,8 @@
                 }
             ],
             "pk_constraint": {
-                "name": "_triggers_name_guild_id_primary_key",
-                "raw_sql": "CONSTRAINT _triggers_name_guild_id_primary_key PRIMARY KEY ( name , guild_id )"
+                "name": "_scripts_name_guild_id_primary_key",
+                "raw_sql": "CONSTRAINT _scripts_name_guild_id_primary_key PRIMARY KEY ( name , guild_id )"
             },
             "unique_constraints": [],
             "check_constraints": [],
@@ -82,8 +82,8 @@
     ],
     "indexes": [
         {
-            "name": "_hash_index_triggers__script_type",
-            "raw_sql": "INDEX _hash_index_triggers__script_type ON triggers USING HASH ( ( script_type ) )"
+            "name": "_hash_index_scripts__script_type",
+            "raw_sql": "INDEX _hash_index_scripts__script_type ON scripts USING HASH ( ( script_type ) )"
         }
     ]
 }
