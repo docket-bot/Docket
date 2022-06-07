@@ -11,7 +11,7 @@ class Guild(Model):
     primary_key = (guild_id,)
 
     @staticmethod
-    async def goc(guild_id: int) -> Guild:
+    async def get_or_create(guild_id: int) -> Guild:
         try:
             return await Guild(guild_id=guild_id).create()
         except asyncpg.UniqueViolationError:

@@ -39,7 +39,7 @@ class CreateEventTrigger:
         if not script:
             raise ScriptNotFound(self.script)
 
-        event = await EventTrigger.goc(ctx.guild_id, self.event)
+        event = await EventTrigger.get_or_create(ctx.guild_id, self.event)
         try:
             await event.scripts.add(script)
         except asyncpg.UniqueViolationError as e:

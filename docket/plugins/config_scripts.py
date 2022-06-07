@@ -75,7 +75,7 @@ class CreateScript:
         if not content:
             await ctx.edit("Script creation timed out.")
 
-        await Guild.goc(ctx.guild_id)
+        await Guild.get_or_create(ctx.guild_id)
         try:
             await Script(guild_id=ctx.guild_id, name=name, code=content).create()
         except asyncpg.UniqueViolationError:

@@ -22,7 +22,7 @@ class EventTrigger(Model):
     primary_key = (trigger_id,)
 
     @staticmethod
-    async def goc(guild_id: int, event_type: int) -> EventTrigger:
+    async def get_or_create(guild_id: int, event_type: int) -> EventTrigger:
         try:
             return await EventTrigger(guild_id=guild_id, event_type=event_type).create()
         except asyncpg.UniqueViolationError:
