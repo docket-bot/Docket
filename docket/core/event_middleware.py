@@ -28,17 +28,16 @@ async def get_scripts(  # TODO: cache
 
 
 def _middleware(
-    function: typing.Callable[[hikari.Event], typing.Dict[str, typing.Any]]
-) -> typing.Callable[[hikari.Event], typing.Awaitable[None]]:
-    async def inner(event: hikari.Event) -> None:
-        guild_id = typing.cast(int, event.guild_id)  # type: ignore
-        scripts = await get_scripts(guild_id, type(event))
+    function: typing.Callable[[hikari.GuildEvent], typing.Dict[str, typing.Any]]
+) -> typing.Callable[[hikari.GuildEvent], typing.Awaitable[None]]:
+    async def inner(event: hikari.GuildEvent) -> None:
+        scripts = await get_scripts(event.guild_id, type(event))
         if not scripts:
             return
         for script in scripts:
             execute_lua(
                 typing.cast("Docket", event.app),
-                guild_id,
+                event.guild_id,
                 script.code,
                 LuaPyDict(function(event)),
             )
@@ -47,5 +46,5 @@ def _middleware(
 
 
 @_middleware
-def default(event: hikari.Event) -> typing.Dict[str, typing.Any]:
+def default(event: hikari.GuildEvent) -> typing.Dict[str, typing.Any]:
     return serialize(event)
