@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from apgorm import ForeignKey, Model, Unique, types
+from apgorm.exceptions import ModelNotFound
 
 from docket.database.models.guild import Guild
+from docket.errors import ScriptNotFound
 
 
 class Script(Model):
@@ -18,3 +20,10 @@ class Script(Model):
     guild_fk = ForeignKey(guild_id, Guild.guild_id)
 
     primary_key = (script_id,)
+
+    @staticmethod
+    async def get_by_name(name: str, guild_id: int) -> Script:
+        try:
+            return await Script.fetch(name=name, guild_id=guild_id)
+        except ModelNotFound:
+            raise ScriptNotFound(name) from None

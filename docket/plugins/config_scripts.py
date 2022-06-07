@@ -12,7 +12,7 @@ import hikari
 from docket.config import CONFIG
 from docket.database.models.guild import Guild
 from docket.database.models.script import Script
-from docket.errors import DocketBaseError, ScriptNotFound
+from docket.errors import DocketBaseError
 from docket.plugins._checks import has_guild_perms
 from docket.plugins._group import docket_group
 
@@ -103,9 +103,7 @@ class DeleteScript:
 
     async def callback(self, ctx: crescent.Context) -> None:
         assert ctx.guild_id
-        script = await Script.exists(name=self.name, guild_id=ctx.guild_id)
-        if not script:
-            raise ScriptNotFound(self.name)
+        script = await Script.get_by_name(self.name, ctx.guild_id)
         await script.delete()
         await ctx.respond(f"Script '{self.name}' deleted.")
 
@@ -120,9 +118,7 @@ class EditScript:
 
     async def callback(self, ctx: crescent.Context) -> None:
         assert ctx.guild_id
-        script = await Script.exists(name=self.name, guild_id=ctx.guild_id)
-        if not script:
-            raise ScriptNotFound(self.name)
+        script = await Script.get_by_name(self.name, ctx.guild_id)
         await ctx.respond(
             "Please send the Lua script (either in a code block or file " "upload)."
         )
@@ -163,10 +159,7 @@ class ViewScript:
             await ctx.respond(embed=embed)
 
         else:
-            script = await Script.exists(name=self.name, guild_id=ctx.guild_id)
-            if not script:
-                raise ScriptNotFound(self.name)
-
+            script = await Script.get_by_name(self.name, ctx.guild_id)
             embed = hikari.Embed(
                 title=f"Script '{script.name}'",
                 description=f"```lua\n{script.code}\n```",
