@@ -40,7 +40,6 @@ async def wait_for_script(ctx: crescent.Context) -> str | None:
         attachment = msg.message.attachments[0]
         content = str(await attachment.read())
     elif not msg.message.attachments:
-        content = msg.message.content
         content = msg.message.content.lstrip("```lua").strip("```")
     else:
         raise DocketBaseError("You can't send both a code block and an attachment.")
