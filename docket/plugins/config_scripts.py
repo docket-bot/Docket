@@ -86,10 +86,10 @@ class CreateScript:
         try:
             await Script(guild_id=ctx.guild_id, name=name, code=content).create()
         except asyncpg.UniqueViolationError:
-            await ctx.edit("A script with that name already exists.")
+            await ctx.respond("A script with that name already exists.")
             return
 
-        await ctx.edit(f"Script '{name}' created.")
+        await ctx.respond(f"Script '{name}' created.")
 
 
 @plugin.include
@@ -131,7 +131,7 @@ class EditScript:
             return
         script.code = content
         await script.save()
-        await ctx.edit(f"Script '{self.name}' edited.")
+        await ctx.respond(f"Script '{self.name}' edited.")
 
 
 @plugin.include
