@@ -81,6 +81,7 @@ class CreateScript:
         content = await wait_for_script(ctx)
         if not content:
             await ctx.edit("Script creation timed out.")
+            return
 
         await Guild.get_or_create(ctx.guild_id)
         try:
