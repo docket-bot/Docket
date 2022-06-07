@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import asyncio
 from difflib import get_close_matches
 from typing import cast
@@ -21,6 +22,9 @@ plugin = crescent.Plugin(
 scripts = docket_group.sub_group("scripts", "Manage scripts")
 
 
+CODE_BLOCK = re.compile(r"^`*\w*?\s*(?P<code>.+)\s*`*$")
+
+
 async def wait_for_script(ctx: crescent.Context) -> str | None:
     def predicate(message: hikari.GuildMessageCreateEvent) -> bool:
         return (
@@ -40,7 +44,9 @@ async def wait_for_script(ctx: crescent.Context) -> str | None:
         attachment = msg.message.attachments[0]
         content = str(await attachment.read())
     elif not msg.message.attachments:
-        content = msg.message.content.lstrip("```lua").strip("```")
+        match = CODE_BLOCK.search(msg.message.content)
+        assert match
+        content = match.group("code").strip("`")
     else:
         raise DocketBaseError("You can't send both a code block and an attachment.")
     return content
