@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from asyncpg import UniqueViolationError
 from apgorm import Model, types
+from asyncpg import UniqueViolationError
 
 
 class Guild(Model):
