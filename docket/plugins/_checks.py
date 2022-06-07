@@ -23,7 +23,7 @@ def has_guild_perms(
 
         if perms not in member.permissions:
             await ctx.respond(
-                "You are missing the following permissions, require to use this "
+                "You are missing the following permissions, required to use this "
                 "command:\n"
                 "-".join(
                     cast(str, perm.name)
