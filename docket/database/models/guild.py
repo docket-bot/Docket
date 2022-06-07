@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import asyncpg
+from asyncpg import UniqueViolationError
 from apgorm import Model, types
 
 
@@ -14,5 +14,5 @@ class Guild(Model):
     async def get_or_create(guild_id: int) -> Guild:
         try:
             return await Guild(guild_id=guild_id).create()
-        except asyncpg.UniqueViolationError:
+        except UniqueViolationError:
             return await Guild.fetch(guild_id=guild_id)
