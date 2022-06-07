@@ -42,7 +42,7 @@ async def wait_for_script(ctx: crescent.Context) -> str | None:
 
     if not msg.message.content:
         attachment = msg.message.attachments[0]
-        content = str(await attachment.read())
+        content = str((await attachment.read()).decode("utf-8"))
     elif not msg.message.attachments:
         match = CODE_BLOCK.search(msg.message.content)
         assert match
