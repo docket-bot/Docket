@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import re
 import asyncio
+import re
 from difflib import get_close_matches
 from typing import cast
 
