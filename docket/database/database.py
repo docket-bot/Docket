@@ -7,10 +7,9 @@ from apgorm import Database as BaseDB
 from apgorm import Index, IndexType
 
 from docket.config import CONFIG
-
-from .models.event import EventTrigger, EventTriggerScript
-from .models.guild import Guild
-from .models.script import Script
+from docket.database.models.event import EventTrigger, EventTriggerScript
+from docket.database.models.guild import Guild
+from docket.database.models.script import Script
 
 _LOG = logging.getLogger(__name__)
 

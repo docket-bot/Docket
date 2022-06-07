@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from apgorm import ForeignKey, Model, Unique, types
 
-from .guild import Guild
+from docket.database.models.guild import Guild
 
 
 class Script(Model):

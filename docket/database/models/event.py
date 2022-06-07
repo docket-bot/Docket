@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncpg
 from apgorm import ForeignKey, ManyToMany, Model, Unique, types
 
-from .script import Script
+from docket.database.models.script import Script
 
 
 class EventTrigger(Model):
