@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+import logging
 
 from apgorm import Database as BaseDB
 from apgorm import Index, IndexType
@@ -10,6 +11,8 @@ from docket.config import CONFIG
 from .models.event import EventTrigger, EventTriggerScript
 from .models.guild import Guild
 from .models.script import Script
+
+_LOG = logging.getLogger(__name__)
 
 
 class Database(BaseDB):
@@ -39,8 +42,8 @@ class Database(BaseDB):
         )
 
         if self.must_create_migrations():
-            print("Making migrations...")
+            _LOG.info("Creating migrations...")
             self.create_migrations()
         if await self.must_apply_migrations():
-            print("Applying migrations...")
+            _LOG.info("Applying migrations...")
             await self.apply_migrations()
