@@ -17,10 +17,6 @@ def has_guild_perms(
 
         assert isinstance(member := ctx.member, hikari.InteractionMember)
 
-        x = perms - member.permissions
-        for y in x.split():
-            y.name
-
         if perms not in member.permissions:
             await ctx.respond(
                 "You are missing the following permissions, required to use this "
