@@ -102,10 +102,7 @@ class LuaManager:
         boot.call(ctx)
 
     def _make_env(self, guild_id: int) -> dict[str, Any]:
-        return {
-            "send_message": callbacks.send_message(self.bot, guild_id),
-            "print": print,
-        }
+        return {"send_message": callbacks.send_message(self.bot, guild_id)}
 
     def _prepare_runtime(
         self, guild_id: int, script_id: int, source: str
