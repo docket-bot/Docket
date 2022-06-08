@@ -54,7 +54,7 @@ class LuaManager:
         self, guild_id: int, script_id: int, source: str
     ) -> tuple[lupa.LuaRuntime, Any]:
         # this function was adapted from code provided by the dev of cleanerbot.xyz,
-        # which permission
+        # with permission
         if script_id in self.runtimes:
             return self.runtimes[script_id]
 
