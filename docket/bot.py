@@ -19,7 +19,7 @@ class Docket(crescent.Bot):
         self.plugins.load("docket.plugins.config_event_triggers")
         self.plugins.load("docket.plugins.error")
 
-        self.runtime = LuaManager(self)
+        self.lua_manager = LuaManager(self)
         self.sync_async = SyncAsync()
         self.database = Database()
 

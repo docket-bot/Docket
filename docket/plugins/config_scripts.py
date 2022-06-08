@@ -107,7 +107,7 @@ class DeleteScript:
         bot = cast("Docket", ctx.app)
         assert ctx.guild_id
         script = await Script.get_by_name(self.name, ctx.guild_id)
-        bot.runtime.runtimes.pop(script.script_id, None)
+        bot.lua_manager.runtimes.pop(script.script_id, None)
         await script.delete()
         await ctx.respond(f"Script '{self.name}' deleted.")
 
@@ -133,7 +133,7 @@ class EditScript:
             return
         script.code = content
         await script.save()
-        bot.runtime.runtimes.pop(script.script_id, None)
+        bot.lua_manager.runtimes.pop(script.script_id, None)
         await ctx.respond(f"Script '{self.name}' edited.")
 
 

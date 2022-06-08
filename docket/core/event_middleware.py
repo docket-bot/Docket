@@ -35,7 +35,7 @@ def _middleware(
         if not scripts:
             return
         for script in scripts:
-            bot.runtime.execute(
+            bot.lua_manager.execute(
                 event.guild_id,
                 script.script_id,
                 script.code,
