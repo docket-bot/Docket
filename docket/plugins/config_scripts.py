@@ -24,6 +24,20 @@ plugin = crescent.Plugin(
 scripts = docket_group.sub_group("scripts", "Manage scripts")
 
 
+async def _get_lua_from_message(msg: hikari.Message) -> str:
+    if not msg.content:
+        attachment = msg.attachments[0]
+        return str((await attachment.read()).decode("utf-8"))
+    elif not msg.attachments:
+        lines = msg.content.split("\n")
+        if lines[0].strip() in {"```", "```lua"}:
+            lines.pop(0)
+        if lines[-1].strip() == "```":
+            lines.pop(-1)
+        return "\n".join(lines)
+    raise DocketBaseError("You can't send both a code block and an attachment.")
+
+
 async def wait_for_script(ctx: crescent.Context) -> str | None:
     def predicate(message: hikari.GuildMessageCreateEvent) -> bool:
         return (
@@ -33,25 +47,13 @@ async def wait_for_script(ctx: crescent.Context) -> str | None:
         )
 
     try:
-        msg = await ctx.app.wait_for(
+        event = await ctx.app.wait_for(
             hikari.GuildMessageCreateEvent, timeout=30, predicate=predicate
         )
     except asyncio.TimeoutError:
         return None
 
-    if not msg.message.content:
-        attachment = msg.message.attachments[0]
-        content = str((await attachment.read()).decode("utf-8"))
-    elif not msg.message.attachments:
-        lines = msg.message.content.split("\n")
-        if lines[0].strip() in {"```", "```lua"}:
-            lines.pop(0)
-        if lines[-1].strip() == "```":
-            lines.pop(-1)
-        content = "\n".join(lines)
-    else:
-        raise DocketBaseError("You can't send both a code block and an attachment.")
-    return content
+    return await _get_lua_from_message(event.message)
 
 
 async def script_name_autocomplete(
