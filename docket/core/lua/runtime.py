@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from docket.bot import Docket
 
 
-# LUA_BOOT was provided by the developer of cleanerbot.xyz
+# LUA_BOOT was provided by the developer of cleanerbot.xyz, with permission
 LUA_BOOT = """
 local debug_sethook = debug.sethook
 local coroutine = coroutine
@@ -110,6 +110,8 @@ class LuaManager:
     def _prepare_runtime(
         self, guild_id: int, script_id: int, source: str
     ) -> tuple[lupa.LuaRuntime, Any]:
+        # this function was adapted from code provided by the dev of cleanerbot.xyz,
+        # which permission
         if script_id in self.runtimes:
             return self.runtimes[script_id]
 
