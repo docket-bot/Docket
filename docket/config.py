@@ -17,4 +17,4 @@ class Config:
 
 
 with open(".config.json") as f:
-    CONFIG = Config(**json.loads(f.read()))
+    CONFIG = Config(**json.load(f))
