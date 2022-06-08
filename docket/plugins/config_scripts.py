@@ -25,17 +25,18 @@ scripts = docket_group.sub_group("scripts", "Manage scripts")
 
 
 async def _get_lua_from_message(msg: hikari.Message) -> str:
-    if not msg.content:
-        attachment = msg.attachments[0]
-        return str((await attachment.read()).decode("utf-8"))
-    elif not msg.attachments:
+    if msg.content and not msg.attachments:
         lines = msg.content.splitlines()
         if lines[0].strip() in {"```", "```lua"}:
             lines.pop(0)
         if lines[-1].strip() == "```":
             lines.pop(-1)
-        return "\n".join(lines)
-    raise DocketBaseError("You can't send both a code block and an attachment.")
+        return "\n".join(lines).strip("`")
+    elif msg.attachments and not msg.content:
+        attachment = msg.attachments[0]
+        return str((await attachment.read()).decode("utf-8"))
+
+    raise DocketBaseError("Please send either a codeblock or a file.")
 
 
 async def wait_for_script(ctx: crescent.Context) -> str | None:
