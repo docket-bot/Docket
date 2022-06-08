@@ -29,7 +29,7 @@ async def _get_lua_from_message(msg: hikari.Message) -> str:
         attachment = msg.attachments[0]
         return str((await attachment.read()).decode("utf-8"))
     elif not msg.attachments:
-        lines = msg.content.split("\n")
+        lines = msg.content.splitlines()
         if lines[0].strip() in {"```", "```lua"}:
             lines.pop(0)
         if lines[-1].strip() == "```":
