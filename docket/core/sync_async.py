@@ -53,7 +53,7 @@ class SyncAsync:
                 *[cb.complete() for cb in callbacks], return_exceptions=True
             )
 
-    def sync_call(self, awaitable: Awaitable[_T]) -> _T | Exception:
+    def sync_call(self, awaitable: Awaitable[_T]) -> _T:
         cb = Callback(self, awaitable)
         self.callbacks.append(cb)
         cb.sync_wait()
