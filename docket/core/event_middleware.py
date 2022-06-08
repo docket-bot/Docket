@@ -5,7 +5,6 @@ import typing
 import hikari
 from apgorm import LazyList
 
-from docket.core.lua.executor import execute_lua
 from docket.core.lua.lua_py_dict import LuaPyDict
 from docket.core.serialize import serialize
 from docket.database.models.event import EventTrigger
@@ -31,13 +30,14 @@ def _middleware(
     function: typing.Callable[[hikari.GuildEvent], typing.Dict[str, typing.Any]]
 ) -> typing.Callable[[hikari.GuildEvent], typing.Awaitable[None]]:
     async def inner(event: hikari.GuildEvent) -> None:
+        bot = typing.cast("Docket", event.app)
         scripts = await get_scripts(event.guild_id, type(event))
         if not scripts:
             return
         for script in scripts:
-            execute_lua(
-                typing.cast("Docket", event.app),
+            bot.runtime.execute(
                 event.guild_id,
+                script.script_id,
                 script.code,
                 LuaPyDict(function(event)),
             )

@@ -4,6 +4,7 @@ from typing import Any
 import crescent
 
 from docket.config import CONFIG
+from docket.core.lua.runtime import LuaManager
 from docket.core.sync_async import SyncAsync
 from docket.database.database import Database
 
@@ -18,6 +19,7 @@ class Docket(crescent.Bot):
         self.plugins.load("docket.plugins.config_event_triggers")
         self.plugins.load("docket.plugins.error")
 
+        self.runtime = LuaManager(self)
         self.sync_async = SyncAsync()
         self.database = Database()
 
