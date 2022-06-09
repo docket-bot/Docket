@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from docket.bot import Docket
 
 
-with open(Path("docket/core/lua/boot.lua"), "r") as f:
+with Path("docket/core/lua/boot.lua").open("r") as f:
     LUA_BOOT = f.read()
 LUA_WHITELIST: list[str] = []
 
