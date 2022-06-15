@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import asyncio
-import re
 from difflib import get_close_matches
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import asyncpg
 import crescent
@@ -16,13 +15,28 @@ from docket.errors import DocketBaseError
 from docket.plugins._checks import has_guild_perms
 from docket.plugins._group import docket_group
 
+if TYPE_CHECKING:
+    from docket.bot import Docket
+
 plugin = crescent.Plugin(
     "config-scripts", command_hooks=[has_guild_perms(hikari.Permissions.MANAGE_GUILD)]
 )
 scripts = docket_group.sub_group("scripts", "Manage scripts")
 
 
-CODE_BLOCK = re.compile(r"^`*\w*?\s*(?P<code>.+)\s*`*$")
+async def _get_lua_from_message(msg: hikari.Message) -> str:
+    if msg.content and not msg.attachments:
+        lines = msg.content.splitlines()
+        if lines[0].strip() in {"```", "```lua"}:
+            lines.pop(0)
+        if lines[-1].strip() == "```":
+            lines.pop(-1)
+        return "\n".join(lines).strip("`")
+    elif msg.attachments and not msg.content:
+        attachment = msg.attachments[0]
+        return str((await attachment.read()).decode("utf-8"))
+
+    raise DocketBaseError("Please send either a codeblock or a file.")
 
 
 async def wait_for_script(ctx: crescent.Context) -> str | None:
@@ -34,22 +48,13 @@ async def wait_for_script(ctx: crescent.Context) -> str | None:
         )
 
     try:
-        msg = await ctx.app.wait_for(
+        event = await ctx.app.wait_for(
             hikari.GuildMessageCreateEvent, timeout=30, predicate=predicate
         )
     except asyncio.TimeoutError:
         return None
 
-    if not msg.message.content:
-        attachment = msg.message.attachments[0]
-        content = str((await attachment.read()).decode("utf-8"))
-    elif not msg.message.attachments:
-        match = CODE_BLOCK.search(msg.message.content)
-        assert match
-        content = match.group("code").strip("`")
-    else:
-        raise DocketBaseError("You can't send both a code block and an attachment.")
-    return content
+    return await _get_lua_from_message(event.message)
 
 
 async def script_name_autocomplete(
@@ -102,8 +107,10 @@ class DeleteScript:
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
+        bot = cast("Docket", ctx.app)
         assert ctx.guild_id
         script = await Script.get_by_name(self.name, ctx.guild_id)
+        bot.lua_manager.runtimes.pop(script.script_id, None)
         await script.delete()
         await ctx.respond(f"Script '{self.name}' deleted.")
 
@@ -117,6 +124,7 @@ class EditScript:
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
+        bot = cast("Docket", ctx.app)
         assert ctx.guild_id
         script = await Script.get_by_name(self.name, ctx.guild_id)
         await ctx.respond(
@@ -128,6 +136,7 @@ class EditScript:
             return
         script.code = content
         await script.save()
+        bot.lua_manager.runtimes.pop(script.script_id, None)
         await ctx.respond(f"Script '{self.name}' edited.")
 
 

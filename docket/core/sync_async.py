@@ -4,6 +4,8 @@ import asyncio
 from time import sleep
 from typing import Any, Awaitable, Generic, TypeVar
 
+from docket.undefined import UNDEF
+
 _T = TypeVar("_T")
 
 
@@ -11,18 +13,19 @@ class Callback(Generic[_T]):
     def __init__(self, manager: SyncAsync, awaitable: Awaitable[_T]) -> None:
         self.awaitable = awaitable
         self.manager = manager
-        self.responded: bool = False
-        self.response: _T
+        self.response: _T | UNDEF = UNDEF.UNDEF
+        self.error: Exception | None = None
 
     async def complete(self) -> None:
-        self.set_result(await self.awaitable)
-
-    def set_result(self, result: _T) -> None:
-        self.response = result
-        self.responded = True
+        try:
+            ret = await self.awaitable
+        except Exception as e:
+            self.error = e
+        else:
+            self.response = ret
 
     def sync_wait(self) -> None:
-        while not self.responded:
+        while self.response is UNDEF.UNDEF and self.error is None:
             sleep(0.1)
 
 
@@ -46,4 +49,7 @@ class SyncAsync:
         cb = Callback(self, awaitable)
         self.callbacks.append(cb)
         cb.sync_wait()
+        if cb.error is not None:
+            raise cb.error
+        assert cb.response is not UNDEF.UNDEF
         return cb.response
