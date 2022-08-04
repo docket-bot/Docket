@@ -14,7 +14,7 @@ lupa = "^1.13"
 
 [tool.poetry.dev-dependencies]
 black = "^22.3.0"
-flake8 = "^4.0.1"
+flake8 = "^5.0.4"
 isort = "^5.10.1"
 mypy = "^0.961"
 nox = "^2022.1.7"
